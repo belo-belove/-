@@ -1,0 +1,96 @@
+描述：
+设有 n 个正整数 a1…an，将它们联接成一排，相邻数字首尾相接，组成一个最大的整数。
+输入格式
+第一行有一个整数，表示数字个数 nn。
+第二行有 nn 个整数，表示给出的 nn 个整数 a_iai​
+输出格式
+一个正整数，表示最大的整数
+ 
+
+思路：
+
+使用字符串两两比较数字 a+b 与 b+a 哪个大，将大的数放在前面，比如b+a 比 a+b 大，则将 b排在 a前面。
+
+从大到小排好序后，将其顺序输出。
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 比较函数，将两个整数转换为字符串连接后比较大小
+int compare(const void *a, const void *b) {
+    char str1[20], str2[20];
+    sprintf(str1, "%d", *(int*)a);
+    sprintf(str2, "%d", *(int*)b);
+    char strA[40], strB[40];
+    strcpy(strA, str1);
+    strcat(strA, str2);
+    strcpy(strB, str2);
+    strcat(strB, str1);
+    return strcmp(strB, strA); // 逆序比较，保证大的数字在前面
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    int arr[n];
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    // 使用快速排序，按照自定义的比较函数排序
+    qsort(arr, n, sizeof(int), compare);
+
+    // 输出结果
+    for (int i = 0; i < n; i++)
+        printf("%d", arr[i]);
+    
+    return 0;
+}
+
+这段代码实现了一个将一组整数连接起来形成的最大整数的算法。下面是它的执行流程：
+
+首先，程序读取输入，包括整数的个数n和n个整数的值。
+然后，定义了一个比较函数compare，用于将两个整数转换为字符串，并按照自定义的规则比较它们的大小。比较规则是将两个整数转换为字符串后连接起来，然后逆序比较，以保证拼接后的数字更大的整数在前面。
+接下来，使用C标准库中的qsort函数对输入的整数数组进行排序，排序时使用了自定义的比较函数compare。
+最后，按照排序后的顺序，将整数数组中的每个元素输出，形成最大整数。
+
+
+
+当使用qsort函数进行排序时，需要提供一个比较函数来告诉qsort如何比较数组中的元素。比较函数compare的作用就是这样，它接受两个指向数组元素的指针，并返回一个整数，告诉qsort两个元素的相对顺序。
+
+比较函数的原型为：
+
+c
+Copy code
+int compare(const void *a, const void *b);
+a和b是指向要比较的两个元素的指针，但是它们的类型是void*，因为qsort不知道数组中元素的实际类型，因此需要将它们转换为实际类型以进行比较。
+比较函数应该返回一个整数：
+如果a应该排在b的前面，返回一个负数。
+如果a和b相等，返回0。
+如果a应该排在b的后面，返回一个正数。
+在我们的比较函数compare中：
+
+c
+Copy code
+int compare(const void *a, const void *b) {
+    char str1[20], str2[20];
+    sprintf(str1, "%d", *(int*)a); // 将a指向的整数转换为字符串存储在str1中
+    sprintf(str2, "%d", *(int*)b); // 将b指向的整数转换为字符串存储在str2中
+    char strA[40], strB[40];
+    strcpy(strA, str1); // 将str1拷贝到strA
+    strcat(strA, str2); // 将str2追加到strA后面
+    strcpy(strB, str2); // 将str2拷贝到strB
+    strcat(strB, str1); // 将str1追加到strB后面
+    return strcmp(strB, strA); // 返回strB和strA的逆序比较结果
+}
+compare函数的实现如下：
+
+首先，将a和b指向的整数转换为字符串，并分别存储在str1和str2中。
+然后，将str1和str2连接起来，分别形成两个可能的拼接顺序，存储在strA和strB中。
+最后，使用strcmp函数比较strB和strA，返回逆序比较的结果。
+在调用qsort函数时，将比较函数compare作为参数传递：
+
+c
+Copy code
+qsort(arr, n, sizeof(int), compare);
+这告诉qsort使用compare函数来比较整数数组arr中的元素，n是数组中元素的数量，sizeof(int)是每个元素的大小。
